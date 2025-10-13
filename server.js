@@ -1,9 +1,10 @@
 const express = require("express")
+const http = require('http');
 const router = require("./src/router")
+const axios = require('axios')
+
 
 const app = express()
-
-const http = require('http');
 const server = http.createServer(app);
 
 
@@ -15,7 +16,7 @@ server.listen(port, () => { console.log(`${port} port is open 😂`) })
 app.use(express.static('public'))
 
 
-app.get("/", router)
+app.use("/", router)
 
 
 
@@ -24,6 +25,39 @@ app.get("/", router)
 app.use((req, res) => {
   res.status(404).send(' <div> <img src="http://www.digitalmesh.com/blog/wp-content/uploads/2020/05/404-error.jpg" alt="page not found image" style="height:100vh; width:100vw;" /></div> ')
 })
+
+
+// // // Now here calling own backend --------->>
+
+
+const MAKE_UP_AND_RUNNING = process.env.MAKE_UP_AND_RUNNING || '1'
+const OWN_SERVER_URL = process.env.OWN_SERVER_URL || 'http://localhost:3000/alive'
+
+
+if (MAKE_UP_AND_RUNNING === 'true' || MAKE_UP_AND_RUNNING === '1') {
+
+  console.log("Working bypass render sleep mode.")
+
+  const url = OWN_SERVER_URL;
+  const interval = 30000;
+
+  setInterval(() => {
+
+    axios.get(url)
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+  }, interval);
+}
+
+
+
+
+
 
 
 // // // // Server err handler code ------>
@@ -44,10 +78,10 @@ const fs = require('fs');
 /// // // Socket IO code --------->>
 
 const io = require("socket.io")(server, {
-  rejectUnauthorized: false , // WARN: please do not do this in production
+  rejectUnauthorized: false, // WARN: please do not do this in production
   reconnectionDelayMax: 10000,
-  maxHttpBufferSize: 2 * 1e8 ,
-  connectTimeout : 80000,
+  maxHttpBufferSize: 2 * 1e8,
+  connectTimeout: 80000,
 
 })
 
@@ -148,9 +182,9 @@ io.on("connection", (socket) => {
 
     // // // If upload msg send true to FE by callback fn , that how we can sent callback msg to FE of user.
 
-    if( msgObj && Object.keys( msgObj ).length > 0){
+    if (msgObj && Object.keys(msgObj).length > 0) {
       callback(true)
-    }else{
+    } else {
       callback(false)
     }
 
