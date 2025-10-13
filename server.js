@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express")
 const http = require('http');
 const router = require("./src/router")
@@ -32,6 +33,10 @@ app.use((req, res) => {
 
 const MAKE_UP_AND_RUNNING = process.env.MAKE_UP_AND_RUNNING || '1'
 const OWN_SERVER_URL = process.env.OWN_SERVER_URL || 'http://localhost:3000/alive'
+
+
+
+console.log(process.env.yes)
 
 
 if (MAKE_UP_AND_RUNNING === 'true' || MAKE_UP_AND_RUNNING === '1') {
